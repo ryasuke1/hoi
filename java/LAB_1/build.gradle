@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    // default; overridden by tasks below
+    mainClass = 'org.example.server.ServerMain'
+}
+
+tasks.register('runServer', JavaExec) {
+    group = 'application'
+    description = 'Run RSA key server'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.example.server.ServerMain'
+    // Example args (override in CLI): --host 0.0.0.0 --port 9000 --issuer "CN=Test CA" --signing-key issuer.key --generator-threads 4
+    jvmArgs = ['-Dfile.encoding=UTF-8']
+    doFirst {
+        def passed = project.findProperty('appArgs') ?: project.findProperty('args')
+        if (passed) {
+            args passed.toString().split(/\s+/) as List<String>
+        }
+    }
+}
+
+tasks.register('runClient', JavaExec) {
+    group = 'application'
+    description = 'Run client'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.example.client.ClientMain'
+    // Example args: --server 127.0.0.1 --port 9000 --name alice --delay 0
+    jvmArgs = ['-Dfile.encoding=UTF-8']
+    doFirst {
+        def passed = project.findProperty('appArgs') ?: project.findProperty('args')
+        if (passed) {
+            args passed.toString().split(/\s+/) as List<String>
+        }
+    }
+}
