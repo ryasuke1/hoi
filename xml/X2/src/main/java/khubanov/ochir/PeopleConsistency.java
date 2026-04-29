@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class PeopleConsistency {
     public void validate(Map<String, Person> people) {
+        // Check helper counters from the source file against the collected relationships.
         for (Person p : people.values()) {
             if (p.childrenNumberExpected != null) {
                 int actual = p.childrenIds.size();
@@ -30,6 +31,7 @@ public class PeopleConsistency {
     }
 
     public void resolveSiblingNamesByPersons(Map<String, Person> people) {
+        // Try to replace sibling names with ids when the referenced person is present in the dataset.
         Map<String, Person> byName = new HashMap<>();
         for (Person p : people.values()) {
             String key = PeopleUtils.buildNameKey(p);
@@ -63,6 +65,7 @@ public class PeopleConsistency {
     }
 
     public void buildSiblingGraph(Map<String, Person> people) {
+        // Sibling relation should be symmetric: if A knows B, then B should know A.
         Map<String, Person> byId = new HashMap<>();
         for (Person p : people.values()) {
             if (p.id != null && !p.id.isBlank()) {
@@ -81,6 +84,7 @@ public class PeopleConsistency {
     }
 
     public void splitSiblingsByGender(Map<String, Person> people) {
+        // Convert generic sibling ids into brother/sister buckets for a more structured output.
         Map<String, Person> byId = new HashMap<>();
         for (Person p : people.values()) {
             if (p.id != null && !p.id.isBlank()) {
@@ -109,6 +113,7 @@ public class PeopleConsistency {
     }
 
     public void resolveParentsByGender(Map<String, Person> people) {
+        // Promote generic parent ids into father/mother when gender makes it unambiguous.
         Map<String, Person> byId = new HashMap<>();
         for (Person p : people.values()) {
             if (p.id != null && !p.id.isBlank()) {
@@ -145,6 +150,7 @@ public class PeopleConsistency {
     }
 
     public void resolveSpousesByName(Map<String, Person> people) {
+        // Same idea as siblings: resolve spouse names to ids whenever possible.
         Map<String, Person> byName = new HashMap<>();
         for (Person p : people.values()) {
             String key = PeopleUtils.buildNameKey(p);
@@ -191,6 +197,7 @@ public class PeopleConsistency {
     }
 
     public void buildSpouseGraph(Map<String, Person> people) {
+        // Spouse relation is also made symmetric.
         Map<String, Person> byId = new HashMap<>();
         for (Person p : people.values()) {
             if (p.id != null && !p.id.isBlank()) {

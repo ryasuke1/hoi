@@ -13,6 +13,7 @@ public class PeopleJaxbAdapter {
         for (Person p : people.values()) {
             JaxbModel.JaxbPerson jp = new JaxbModel.JaxbPerson();
 
+            // Every JAXB person must have a valid XML ID because links use ID/IDREF.
             String xmlId = normalizeXmlId(p.id);
             if (xmlId == null || byXmlId.containsKey(xmlId)) {
                 do {
@@ -32,6 +33,7 @@ public class PeopleJaxbAdapter {
             root.persons.add(jp);
         }
 
+        // This map resolves original raw ids to the JAXB objects created in the first pass.
         Map<String, JaxbModel.JaxbPerson> rawIdToJaxb = new HashMap<>();
         for (Person p : people.values()) {
             if (p.id != null && !p.id.isBlank()) {
@@ -39,6 +41,7 @@ public class PeopleJaxbAdapter {
             }
         }
 
+        // Second pass fills relationship sections after all target persons already exist.
         for (Person p : people.values()) {
             JaxbModel.JaxbPerson jp = personToJaxb.get(p);
 
@@ -161,6 +164,7 @@ public class PeopleJaxbAdapter {
 
     private JaxbModel.PersonLink linkById(Map<String, JaxbModel.JaxbPerson> byId, String id) {
         JaxbModel.JaxbPerson target = byId.get(id);
+        // Fall back to name text if the id cannot be resolved inside the final document.
         return target != null ? JaxbModel.PersonLink.byRef(target) : JaxbModel.PersonLink.byName(id);
     }
 
@@ -197,6 +201,7 @@ public class PeopleJaxbAdapter {
         String s = id.trim();
         if (s.isEmpty()) return null;
         s = s.replaceAll("[^A-Za-z0-9._-]", "_");
+        // XML IDs cannot start with a digit, so add a safe prefix when needed.
         if (!s.matches("[A-Za-z_].*")) s = "P_" + s;
         return s;
     }

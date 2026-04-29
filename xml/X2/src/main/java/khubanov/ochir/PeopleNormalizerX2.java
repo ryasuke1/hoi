@@ -28,6 +28,7 @@ public class PeopleNormalizerX2 {
         System.out.println("Person elements seen: " + parseResult.personElementsSeen());
         System.out.println("Unique persons after merge: " + people.size());
 
+        // Reuse X1 normalization pipeline before converting to strict JAXB output.
         PeopleConsistency consistency = new PeopleConsistency();
         consistency.validate(people);
         consistency.resolveSiblingNamesByPersons(people);
@@ -37,9 +38,11 @@ public class PeopleNormalizerX2 {
         consistency.resolveSpousesByName(people);
         consistency.buildSpouseGraph(people);
 
+        // Convert internal Person objects into JAXB classes that mirror the target XSD.
         JaxbModel.JaxbPeople root = new PeopleJaxbAdapter().adapt(people);
 
         try (OutputStream out = Files.newOutputStream(output)) {
+            // Marshal XML and validate it against the provided schema in one step.
             new PeopleJaxbWriter().write(root, out, schema);
         }
 

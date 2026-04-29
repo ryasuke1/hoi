@@ -15,6 +15,7 @@ public class PeopleParser {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         XMLStreamReader reader = factory.createXMLStreamReader(in);
 
+        // LinkedHashMap keeps input order stable after duplicate records are merged.
         Map<String, Person> people = new LinkedHashMap<>();
         Person current = null;
         String currentTextElement = null;
@@ -48,6 +49,7 @@ public class PeopleParser {
                             current.nameAttr = PeopleUtils.normalizeName(nameAttr);
                         }
                     } else if (current != null) {
+                        // The source XML is not strict, so the same fact can appear in different tags/attrs.
                         switch (name) {
                             case "firstname" -> {
                                 String v = reader.getAttributeValue(null, "value");
@@ -241,6 +243,7 @@ public class PeopleParser {
                     elementStack.pop();
 
                     if ("person".equals(name) && current != null) {
+                        // Prefer a real id; otherwise fall back to a normalized full-name key.
                         String key = current.id;
                         if (key == null || key.isBlank()) {
                             key = PeopleUtils.buildNameKey(current);
@@ -252,6 +255,7 @@ public class PeopleParser {
                             if (existing == null) {
                                 people.put(key, current);
                             } else {
+                                // Multiple partial records of the same person are merged into one object.
                                 PeopleUtils.mergePerson(existing, current);
                             }
                         }

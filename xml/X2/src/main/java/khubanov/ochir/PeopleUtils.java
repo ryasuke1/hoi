@@ -4,6 +4,7 @@ import java.util.Locale;
 
 public class PeopleUtils {
     static String prefer(String oldVal, String newVal) {
+        // Keep the first non-empty value when duplicate records disagree.
         if (newVal == null || newVal.isBlank()) return oldVal;
         if (oldVal == null || oldVal.isBlank()) return newVal;
         if (oldVal.equals(newVal)) return oldVal;
@@ -16,6 +17,7 @@ public class PeopleUtils {
     }
 
     static String buildNameKey(Person p) {
+        // Fallback merge key for records that do not have a stable id.
         if (p.firstName != null || p.lastName != null) {
             String fn = p.firstName != null ? p.firstName : "";
             String ln = p.lastName != null ? p.lastName : "";
@@ -61,6 +63,7 @@ public class PeopleUtils {
     }
 
     static void mergePerson(Person target, Person src) {
+        // Scalar fields are filled once, relationship sets are unioned across duplicates.
         target.firstName = prefer(target.firstName, src.firstName);
         target.lastName = prefer(target.lastName, src.lastName);
         target.nameAttr = prefer(target.nameAttr, src.nameAttr);

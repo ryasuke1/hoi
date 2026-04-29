@@ -1,0 +1,37 @@
+erDiagram
+  PERSON {
+    string id PK
+    string sourceKey
+    string rawName
+    string firstName
+    string lastName
+    string gender  "male|female|unknown"
+  }
+
+  PERSON ||--o| SPOUSE_LINK : has
+  SPOUSE_LINK {
+    string spouse_info_id FK "-> SPOUSE_INFO.person_id"
+    string ref FK            "IDREF -> PERSON.id"
+    string role              "wife|husband|spouse"
+  }
+
+  PERSON ||--o{ PARENT_LINK : has
+  PARENT_LINK {
+    string parents_info_id FK "-> PARENTS_INFO.person_id"
+    string ref FK             "IDREF -> PERSON.id"
+    string role               "father|mother|parent"
+  }
+
+  PERSON ||--o{ CHILD_LINK : has
+  CHILD_LINK {
+    string children_info_id FK "-> CHILDREN_INFO.person_id"
+    string ref FK              "IDREF -> PERSON.id"
+    string role                "son|daughter|child"
+  }
+
+  PERSON ||--o{ SIBLING_LINK : has
+  SIBLING_LINK {
+    string siblings_info_id FK "-> SIBLINGS_INFO.person_id"
+    string ref FK              "IDREF -> PERSON.id"
+    string role                "brother|sister|sibling"
+  }

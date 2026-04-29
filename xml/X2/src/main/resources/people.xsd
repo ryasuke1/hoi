@@ -41,9 +41,9 @@
 
     <xs:complexType name="spousesType">
         <xs:sequence>
-            <xs:element name="wife" type="linkType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="husband" type="linkType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="spouse" type="linkType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="wife" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="husband" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="spouse" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 

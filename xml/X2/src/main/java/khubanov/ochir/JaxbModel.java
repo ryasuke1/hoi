@@ -7,6 +7,7 @@ import java.util.List;
 public final class JaxbModel {
     private JaxbModel() {}
 
+    // Root element of the strict output XML.
     @XmlRootElement(name = "people")
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class JaxbPeople {
@@ -20,6 +21,7 @@ public final class JaxbModel {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class JaxbPerson {
         @XmlAttribute(name = "id", required = true)
+        // Real XML ID so other elements can reference this person via IDREF.
         @XmlID
         public String id;
 
@@ -62,10 +64,12 @@ public final class JaxbModel {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class PersonLink {
         @XmlAttribute(name = "ref")
+        // Preferred link mode: reference an existing person in the same document.
         @XmlIDREF
         public JaxbPerson ref;
 
         @XmlAttribute(name = "name")
+        // Fallback when a relation could not be resolved to an existing person id.
         public String name;
 
         public static PersonLink byRef(JaxbPerson p) {
@@ -100,6 +104,7 @@ public final class JaxbModel {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class ChildrenSection {
         @XmlAttribute(name = "declaredCount")
+        // Optional counter copied from the original file for consistency checks.
         public Integer declaredCount;
 
         @XmlElement(name = "son")

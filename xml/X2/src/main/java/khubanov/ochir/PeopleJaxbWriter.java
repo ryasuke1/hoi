@@ -18,6 +18,7 @@ public class PeopleJaxbWriter {
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 
         if (xsdPath != null) {
+            // Invalid output will fail during marshalling instead of silently producing bad XML.
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(xsdPath.toFile());
             marshaller.setSchema(schema);
